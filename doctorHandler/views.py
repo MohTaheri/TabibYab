@@ -11,23 +11,6 @@ from django import db
 import operator
 
 
-# def search_view(request):
-#
-#     model = Clinic
-#     initial_queryset = model.objects.all()
-#     form = searchForm(request.GET)
-#     predicates = []
-#     if form.is_valid() :
-#         for fieldname in form.fields:
-#             print fieldname
-#             print type(form.cleaned_data[fieldname])
-#
-#         predicates += [('name'+'__contains',form.cleaned_data['name'])]
-#         if predicates != [] :
-#             q_list = [Q(x) for x in predicates]
-#             initial_queryset = initial_queryset.filter(reduce(operator.and_,q_list))
-
-
 class doctorsFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(name='name', lookup_type='contains')
     class Meta:
@@ -75,3 +58,65 @@ class commentListView(generics.ListCreateAPIView):
 class commentDetailView(generics.RetrieveUpdateDestroyAPIView) :
     model = Comment
     serializer_class = CommentDetailSerializer
+
+
+
+
+class PhoneNumbersFilter(django_filters.FilterSet):
+    class Meta:
+        model = PhoneNumber
+        fields = ['clinic']
+
+
+class PhoneNumberListView(generics.ListCreateAPIView):
+    model = PhoneNumber
+    serializer_class = PhoneNumberSerializer
+    filter_class = PhoneNumbersFilter
+
+class PhoneNumberDetailView(generics.RetrieveUpdateDestroyAPIView) :
+    model = PhoneNumber
+    serializer_class = PhoneNumberSerializer
+
+
+
+
+
+
+
+
+class PicturesFilter(django_filters.FilterSet):
+    class Meta:
+        model = Picture
+        fields = ['clinic']
+
+
+class PicturesListView(generics.ListCreateAPIView):
+    model = Picture
+    serializer_class = PicturesSerializer
+    filter_class = PicturesFilter
+
+
+class PicturesDetailView(generics.RetrieveUpdateDestroyAPIView) :
+    model = Picture
+    serializer_class = PicturesSerializer
+
+
+
+class OperatingHoursFilter(django_filters.FilterSet):
+    class Meta:
+        model = OperatingHours
+        fields = ['clinic']
+
+
+class OperatingHoursListView(generics.ListCreateAPIView):
+    model = OperatingHours
+    serializer_class = OperatingHoursSerializer
+    filter_class = OperatingHoursFilter
+
+
+class OperatingHoursDetailView(generics.RetrieveUpdateDestroyAPIView) :
+    model = OperatingHours
+    serializer_class = OperatingHoursSerializer
+
+
+
