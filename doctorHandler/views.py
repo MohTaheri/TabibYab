@@ -120,3 +120,21 @@ class OperatingHoursDetailView(generics.RetrieveUpdateDestroyAPIView) :
 
 
 
+
+class InsurancesFilter(django_filters.FilterSet):
+    class Meta:
+        model = Insurance
+        fields = ['clinic']
+
+
+class InsurancesListView(generics.ListCreateAPIView):
+    model = Insurance
+    serializer_class = InsurancesSerializer
+    filter_class = InsurancesFilter
+
+
+class InsurancesDetailView(generics.RetrieveUpdateDestroyAPIView) :
+    model = Insurance
+    serializer_class = InsurancesSerializer
+
+

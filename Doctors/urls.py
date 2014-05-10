@@ -29,7 +29,10 @@ urlpatterns = patterns('',
     url(r'^operatinghour/(?P<pk>[0-9]+)/$',OperatingHoursDetailView.as_view()) ,
 
     url(r'^pictures',PicturesListView.as_view() ) ,
-    url(r'^picture/(?P<pk>[0-9]+)/$',commentDetailView.as_view()) ,
+    url(r'^picture/(?P<pk>[0-9]+)/$',PicturesDetailView.as_view()) ,
+
+    url(r'^insurances',InsurancesListView.as_view() ) ,
+    url(r'^insurance/(?P<pk>[0-9]+)/$',InsurancesDetailView.as_view()) ,
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
