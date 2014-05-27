@@ -24,17 +24,23 @@ class Clinic(models.Model):
     name = models.CharField(max_length=200,verbose_name=u'نام')
     coordinates = models.PointField(verbose_name=u'مختصات جغرافیایی')
     type = models.CharField(verbose_name=u'نوع', max_length=32,null=True)
+    speciality_level = models.CharField(verbose_name=u'درجه تخصص', max_length=32, null=True)
     speciality = models.CharField(verbose_name=u'تخصص', max_length=32, null=True)
-    appointmentOnly = models.CharField(verbose_name=u'نیاز به وقت قبلی', choices=[(u'بلی',u'بلی'),(u'خیر',u'خیر')],max_length=16, null=True)
+    appointmentOnly = models.CharField(verbose_name=u'نیاز به وقت قبلی', max_length=16, null=True)
     websiteAddress = models.CharField(max_length=200,verbose_name=u'آدرس وب سایت', null=True)
     address = models.CharField(max_length=200,verbose_name=u'آدرس', null=True)
     description = models.CharField(max_length=200,verbose_name=u'توضیحات', null=True)
     profileImage = models.ImageField(verbose_name=u'عکس پروفایل',upload_to=path_and_rename('media/profilePics'), null=True)
+    rating = models.DecimalField(max_digits=2, decimal_places=1,verbose_name=u'امتیاز',default=0)
+    comment_num = models.IntegerField(verbose_name='تعداد نظر‌ها',default=0)
     objects = models.GeoManager()
 
-    def get_avg_rating(self):
-        average = Comment.objects.all().filter(clinic = self.id).aggregate(avg=Avg('rating'))
-        return average['avg']
+    # def get_avg_rating(self):
+     #    average = Comment.objects.all().filter(clinic = self.id).aggregate(avg=Avg('rating'))
+	# if average['avg'] != None :
+	#         return average['avg']
+	# else :
+	# 	return 0
 
     def get_avg_waiting_time(self):
         average = Comment.objects.all().filter(clinic = self.id).aggregate(avg=Avg('waiting_time'))
@@ -59,6 +65,31 @@ class Comment(models.Model):
     waiting_time = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True,verbose_name=u'زمان انتظار در مطب')
     queue_time = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True,verbose_name=u'زمان انتظار برای وقت دادن')
     objects = models.GeoManager()
+
+    def save(self, *args, **kwargs):
+        if self.pk is None :
+            super(Comment, self).save(*args, **kwargs)
+            oldSum = self.clinic.rating * self.clinic.comment_num
+            self.clinic.comment_num += 1
+            newSum = oldSum + self.rating
+            self.clinic.rating = newSum / self.clinic.comment_num
+            self.clinic.save()
+        else :
+            oldComment = Comment.objects.get(pk=self.pk)
+            dt = self.rating - oldComment.rating
+            oldSum = self.clinic.rating * self.clinic.comment_num
+            newSum = oldSum + dt
+            self.clinic.rating = newSum / self.clinic.comment_num
+            self.clinic.save()
+            super(Comment, self).save(*args, **kwargs)
+
+    def delete(self, using=None):
+        oldSum = self.clinic.rating * self.clinic.comment_num
+        self.clinic.comment_num -= 1
+        newSum = oldSum - self.rating
+        self.clinic.rating = newSum / self.clinic.comment_num
+        self.clinic.save()
+        super(Comment, self).delete()
 
 
 class PhoneNumber(models.Model):

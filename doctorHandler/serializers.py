@@ -32,23 +32,23 @@ class InsurancesSerializer(serializers.ModelSerializer):
 
 
 class ClinicListSerializer(serializers.ModelSerializer):
-    rating = serializers.DecimalField(source='get_avg_rating', read_only=True)
     class Meta:
         model = Clinic
         write_only_fields = ('appointmentOnly','description', 'websiteAddress',)
+        read_only_fields = ('rating','comment_num',)
 class ClinicDetailSerializer(serializers.ModelSerializer):
-    rating = serializers.DecimalField(source='get_avg_rating', read_only=True)
     waiting_time = serializers.DecimalField(source='get_avg_waiting_time', read_only=True)
     queue_time = serializers.DecimalField(source='get_avg_queuing_time', read_only=True)
 
-    phone_numbers = PhoneNumberSerializer(many=True)
-    operating_hours = OperatingHoursSerializer(many=True)
-    pictures = PicturesSerializer(many=True)
-    insurances = InsurancesSerializer(many=True)
+    phone_numbers = PhoneNumberSerializer(many=True, read_only=True)
+    operating_hours = OperatingHoursSerializer(many=True, read_only=True)
+    pictures = PicturesSerializer(many=True, read_only=True)
+    insurances = InsurancesSerializer(many=True, read_only=True)
 
 
     class Meta:
         model = Clinic
+        read_only_fields = ('rating','comment_num',)
 
 
 

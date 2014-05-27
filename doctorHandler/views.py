@@ -1,8 +1,10 @@
 # Create your views here.
 import django_filters
 from forms import *
+from django.contrib.gis.measure import D
 from models import *
 from rest_framework import generics
+from rest_framework import filters
 from serializers import *
 from decimal import *
 from django.contrib.gis.geos import *
@@ -15,22 +17,24 @@ class doctorsFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(name='name', lookup_type='contains')
     class Meta:
         model = Clinic
-        fields = ['name']
+        fields = ['name','speciality_level','speciality','type',]
 
 
 class doctorsListView(generics.ListCreateAPIView):
     model = Clinic
     serializer_class = ClinicListSerializer
     filter_class = doctorsFilter
+    ordering_fields = '__all__'
 
     def get_queryset(self):
 
         query_set = Clinic.objects.all()
-        if self.request.GET.__contains__('lat') and self.request.GET.__contains__('long'):
+        if self.request.GET.__contains__('lat') and self.request.GET.__contains__('lng'):
             lat = self.request.GET['lat']
-            long = self.request.GET['long']
+            long = self.request.GET['lng']
+            dist = self.request.GET['dist']
             pnt = fromstr('POINT('+lat+' ' +long+')', srid=4326)
-            query_set = query_set.filter(coordinates__distance_lte=(pnt, 10))
+            query_set = query_set.filter(coordinates__distance_lte=(pnt, D(km=dist)))
 
         return query_set
 
