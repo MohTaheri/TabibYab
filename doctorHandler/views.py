@@ -29,7 +29,7 @@ class doctorsListView(generics.ListCreateAPIView):
     def get_queryset(self):
 
         query_set = Clinic.objects.all()
-        if self.request.GET.__contains__('lat') and self.request.GET.__contains__('lng'):
+        if self.request.GET.__contains__('lat') and self.request.GET.__contains__('lng') and self.request.GET.__contains__('dist'):
             lat = self.request.GET['lat']
             long = self.request.GET['lng']
             dist = self.request.GET['dist']
