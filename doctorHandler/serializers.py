@@ -39,7 +39,7 @@ class ClinicListSerializer(serializers.ModelSerializer):
 class ClinicDetailSerializer(serializers.ModelSerializer):
     waiting_time = serializers.DecimalField(source='get_avg_waiting_time', read_only=True)
     queue_time = serializers.DecimalField(source='get_avg_queuing_time', read_only=True)
-
+    visiting_fee = serializers.DecimalField(source='get_avg_visiting_fee', read_only=True)
     phone_numbers = PhoneNumberSerializer(many=True, read_only=True)
     operating_hours = OperatingHoursSerializer(many=True, read_only=True)
     pictures = PicturesSerializer(many=True, read_only=True)

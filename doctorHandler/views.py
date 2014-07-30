@@ -34,7 +34,22 @@ class doctorsListView(generics.ListCreateAPIView):
             long = self.request.GET['lng']
             dist = self.request.GET['dist']
             pnt = fromstr('POINT('+lat+' ' +long+')', srid=4326)
-            query_set = query_set.filter(coordinates__distance_lte=(pnt, D(km=dist)))
+            if self.request.GET.__contains__('orderby'):
+                orderBy = self.request.GET['orderby']
+                if orderBy == 'd':
+                    query_set = query_set.filter(coordinates__distance_lte=(pnt, D(km=dist))).distance(pnt).order_by('distance')
+                else:
+                    query_set = query_set.filter(coordinates__distance_lte=(pnt, D(km=dist))).order_by('rating')
+                    # query_set = query_set.reverse()
+            else:
+                query_set = query_set.filter(coordinates__distance_lte=(pnt, D(km=dist)))
+
+        if self.request.GET.__contains__('orderby'):
+            orderBy = self.request.GET['orderby']
+            if orderBy == 'r':
+                query_set = query_set.order_by('rating')
+                query_set = query_set.reverse()
+
 
         return query_set
 

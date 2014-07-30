@@ -45,11 +45,15 @@ class Clinic(models.Model):
     def get_avg_waiting_time(self):
         average = Comment.objects.all().filter(clinic = self.id).aggregate(avg=Avg('waiting_time'))
         return average['avg']
+		
+		
     def get_avg_queuing_time(self):
         average = Comment.objects.all().filter(clinic = self.id).aggregate(avg=Avg('queue_time'))
         return average['avg']
-
-
+    	
+    def get_avg_visiting_fee(self):
+        average = Comment.objects.all().filter(clinic = self.id).aggregate(avg=Avg('price'))
+        return average['avg']
 
 
 class Comment(models.Model):
